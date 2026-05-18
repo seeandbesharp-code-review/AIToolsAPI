@@ -118,7 +118,7 @@ namespace Test
             var repository = new UserRepository(mockContext.Object);
             var loginUser = new User { Email = "user@test.com", PasswordHash = "correcthash" };
             
-            var result = await repository.Login(loginUser);
+            var result = await repository.GetUserByEmail(loginUser.Email);
 
             Assert.NotNull(result);
             Assert.Equal("user@test.com", result.Email);
@@ -142,9 +142,9 @@ namespace Test
             mockContext.Setup(c => c.Users).Returns(mockSet.Object);
 
             var repository = new UserRepository(mockContext.Object);
-            var loginUser = new User { Email = "user@test.com", PasswordHash = "wronghash" };
+            var loginUser = new User { Email = "wrong@test.com", PasswordHash = "wronghash" };
             
-            var result = await repository.Login(loginUser);
+            var result = await repository.GetUserByEmail(loginUser.Email);
 
             Assert.Null(result);
         }

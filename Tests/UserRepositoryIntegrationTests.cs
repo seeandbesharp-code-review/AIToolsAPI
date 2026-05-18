@@ -93,7 +93,7 @@ namespace Test
             var repository = new UserRepository(_fixture.Context);
             var loginAttempt = new User { Email = "login@test.com", PasswordHash = "correcthash" };
             
-            var result = await repository.Login(loginAttempt);
+            var result = await repository.GetUserByEmail(loginAttempt.Email);
 
             Assert.NotNull(result);
             Assert.Equal("login@test.com", result.Email);
@@ -108,9 +108,9 @@ namespace Test
             await _fixture.Context.SaveChangesAsync();
 
             var repository = new UserRepository(_fixture.Context);
-            var loginAttempt = new User { Email = "login@test.com", PasswordHash = "wronghash" };
+            var loginAttempt = new User { Email = "wrong@test.com", PasswordHash = "wronghash" };
             
-            var result = await repository.Login(loginAttempt);
+            var result = await repository.GetUserByEmail(loginAttempt.Email);
 
             Assert.Null(result);
         }
@@ -125,7 +125,7 @@ namespace Test
             var repository = new UserRepository(_fixture.Context);
             var loginAttempt = new User { Email = "wrong@test.com", PasswordHash = "correcthash" };
             
-            var result = await repository.Login(loginAttempt);
+            var result = await repository.GetUserByEmail(loginAttempt.Email);
 
             Assert.Null(result);
         }

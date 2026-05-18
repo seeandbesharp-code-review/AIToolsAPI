@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BCrypt.Net;
 using Dto;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,18 @@ namespace Services
 
         public int getStrengthByPassword(string p)
         {
-
             var result = Zxcvbn.Core.EvaluatePassword(p);
-           int strength= result.Score;
-            return strength;
+            return result.Score;
+        }
+
+        public string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        public bool VerifyPassword(string password, string passwordHash)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, passwordHash);
         }
     }
 }

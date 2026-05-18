@@ -85,10 +85,13 @@ namespace Services
 
         public async Task<DtoAuthResponse?> Login(DtoUser_Gmail_Password value)
         {
-            var a = _mapper.Map<DtoUser_Gmail_Password, User>(value);
-            var u = await _r.Login(a);
-
+            var u = await _r.GetUserByEmail(value.Email);
             if (u == null) return null;
+
+            if (!_passwordService.VerifyPassword(value.PasswordHash, u.PasswordHash))
+            {
+                return null;
+            }
 
             var dtoUser = _mapper.Map<User, DtoUser_Name_Gmail_Role_Id>(u);
             return new DtoAuthResponse
@@ -108,6 +111,7 @@ namespace Services
             if (existingUser == null) return null;
             _mapper.Map(userDto, existingUser);
             existingUser.UserId = id;
+            existingUser.PasswordHash = _passwordService.HashPassword(userDto.PasswordHash);
             var res = await _r.update(id, existingUser);
             await TryRemoveUsersCache();
 
@@ -116,9 +120,8 @@ namespace Services
       
         public async Task<bool> IsAdminById(int id, string password)
         {
-           
-            var user = await _r.GetUserByIdAndPassword(id, password);
-            if (user != null && user.Role == "Admin")
+            var user = await _r.GetUserById(id);
+            if (user != null && _passwordService.VerifyPassword(password, user.PasswordHash) && user.Role == "Admin")
             {
                 return true;
             }

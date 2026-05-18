@@ -34,9 +34,9 @@ namespace Repository
               return user;
         }
 
-        public async Task<User?> Login(User value)
+        public async Task<User?> GetUserByEmail(string email)
         {
-            return await dbContext.Users.FirstOrDefaultAsync(user => user.PasswordHash == value.PasswordHash && user.Email == value.Email);
+            return await dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
         }
 
         public async Task<User> update(int id, User value)
