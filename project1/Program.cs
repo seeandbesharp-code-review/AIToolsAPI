@@ -1,4 +1,4 @@
-﻿using Api;
+using Api;
 using Api.Middlware;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -156,6 +156,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAngular");
+
+// Enforce the rate-limiting policy registered during service configuration
+app.UseRateLimiter();
 
 app.UseErrorHandling();
 
